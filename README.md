@@ -1,6 +1,7 @@
 #iOS打印
 
 > [gitHub链接](https://github.com/tangdaoyong/print)
+> [参考链接](https://stackoverflow.com/questions/24003291/ifdef-replacement-in-the-swift-language)
 
 ### 几种查看日志的方式
 
@@ -57,7 +58,7 @@
 ### 打印
 
 > 为了不进行一些无谓的print，最好使用宏自定义打印方法
-> Swift中设置宏定义: build Settings -> Other Swift Flags ->Debug添加宏定义
+> Swift中设置宏定义(swift中没有宏的概念): build Settings -> Other Swift Flags ->Debug添加宏定义(-D DEBUG)
 
 ``` Swift
 public func YXPrint(_ message:Any?, columnNumber: Int = #column, fileName: String = #file, methodName: String = #function, lineNumber:Int = #line) {
@@ -73,3 +74,33 @@ public func YXPrint(_ message:Any?, columnNumber: Int = #column, fileName: Strin
     #endif
 }
 ```
+
+### Swift添加宏
+
++ 在项目的Build Settings里配置Swift Compiler - Custom Flags，展开Other Swift Flags，在Debug右侧输入“-DDEBUG”。也可以“-D DEBUG”，但是不能有赋值，如：“-DDEBUG=1” 或 “-D DEBUG=1”都是无效的。
++ 在项目的Build Settings里配置Apple LLVM x.x - Preprocessiong，展开Preprocessor Macros，在Debug右侧默认包含“DEBUG=1”，若没有请手动加入。
+
+> 说明：第1步使Swift代码编译Debug时定义DEBUG标记，第2步使Objective-C、C、C++的LLVM预处理在Debug时定义DEBUG=1宏标记。如果是纯Swift工程可以忽略第2步。
+
++ 在Swfit有另外一种方法是通过函数判断编译的优化选项，但是不够直观而且没有官方的文档，不建议使用。
+
+```swift
+// ** Be carefull, Don`t do this: **
+if _isDebugAssertConfiguration() {
+    print("--通过函数判断编译的优化选项--")
+}
+```
+
+### Swift中的编译标记
+
+```swift
+#if <condition>
+
+#elseif <condition>
+
+#else
+
+#endif
+```
+
+> 其中#elseif 和 #else 是可选的。
